@@ -8,45 +8,45 @@ Comprehensive design guide for web, mobile, and desktop applications. Contains 6
 
 ## When to Apply
 
-当任务涉及 **UI 结构、视觉设计决策、交互模式或用户体验质量控制** 时，应使用此 Skill。
+タスクが **UI の構造、ビジュアルデザインの判断、インタラクションのパターン、UX の品質管理** に関わるときは、このスキルを使う。
 
 ### Primary Use Cases
 
-在以下情况此 Skill 最为有用：
+次のような場面で最も役に立つ：
 
-- 设计新的页面（Landing Page、Dashboard、Admin、SaaS、Mobile App）
-- 创建或重构 UI 组件（按钮、弹窗、表单、表格、图表等）
-- 选择配色方案、字体系统、间距规范或布局体系
-- 审查 UI 代码的用户体验、可访问性或视觉一致性
-- 实现导航结构、动效或响应式行为
-- 做产品层级的设计决策（风格、信息层级、品牌表达）
-- 提升界面的感知质量、清晰度或可用性
+- 新しいページを設計する（ランディングページ、ダッシュボード、管理画面、SaaS、モバイルアプリ）
+- UI コンポーネントを作る・作り直す（ボタン、モーダル、フォーム、テーブル、チャートなど）
+- 配色、フォントの体系、余白の規定、レイアウトの構成を選ぶ
+- UI コードを UX・アクセシビリティ・視覚的な一貫性の観点でレビューする
+- ナビゲーション構造、モーション、レスポンシブの挙動を実装する
+- プロダクト全体に関わるデザイン判断をする（スタイル、情報の階層、ブランド表現）
+- 画面の質感、わかりやすさ、使いやすさを引き上げる
 
 ### Recommended
 
-在以下情况建议使用此 Skill：
+次のような場面では使用を勧める：
 
-- UI 看起来"不够专业"，但原因不明确
-- 收到可用性或体验方面的反馈
-- 准备上线前的 UI 质量优化
-- 需要对齐跨平台设计（Web / iOS / Android）
-- 构建设计系统或可复用组件库
+- UI が「なんとなく素人っぽい」が、理由がはっきりしない
+- 使いやすさや体験について指摘をもらった
+- リリース前に UI の品質を詰めたい
+- Web / iOS / Android でデザインを揃えたい
+- デザインシステムや、使い回せるコンポーネント群を作る
 
 ### Skip
 
-在以下情况无需使用此 Skill：
+次のような場面では使わなくてよい：
 
-- 纯后端逻辑开发
-- 仅涉及 API 或数据库设计
-- 与界面无关的性能优化
-- 基础设施或 DevOps 工作
-- 非视觉类脚本或自动化任务
+- バックエンドのロジック開発だけの作業
+- API やデータベースの設計だけの作業
+- 画面と関係のないパフォーマンス改善
+- インフラや DevOps の作業
+- 見た目を伴わないスクリプトや自動化のタスク
 
-**判断准则**：如果任务会改变某个功能 **看起来如何、使用起来如何、如何运动或如何被交互**，就应该使用此 Skill。
+**判断の基準**：そのタスクが、ある機能の **見え方・使い心地・動き方・操作のされ方** を変えるものなら、このスキルを使う。
 
 ## Rule Categories by Priority
 
-*供人工/AI 查阅：按 1→10 决定先关注哪类规则；需要细则时用 `--domain <Domain>` 查询。脚本不读取本表。*
+*人／AI が参照するための表。1→10 の順に、どのカテゴリを先に見るかを決める。細かい規則が必要なときは `--domain <Domain>` で検索する。スクリプトはこの表を読まない。*
 
 | Priority | Category | Impact | Domain | Key Checks (Must Have) | Anti-Patterns (Avoid) |
 |----------|----------|--------|--------|------------------------|------------------------|
@@ -325,10 +325,10 @@ Use this skill when the user requests any of the following:
 
 | Scenario | Trigger Examples | Start From |
 |----------|-----------------|------------|
-| **New project / page** | "做一个 landing page"、"Build a dashboard" | Step 1 → Step 2 (design system) |
+| **New project / page** | 「ランディングページを作って」、"Build a dashboard" | Step 1 → Step 2 (design system) |
 | **New component** | "Create a pricing card"、"Add a modal" | Step 3 (domain search: style, ux) |
-| **Choose style / color / font** | "What style fits a fintech app?"、"推荐配色" | Step 2 (design system) |
-| **Review existing UI** | "Review this page for UX issues"、"检查无障碍" | Quick Reference checklist above |
+| **Choose style / color / font** | "What style fits a fintech app?"、「配色を提案して」 | Step 2 (design system) |
+| **Review existing UI** | "Review this page for UX issues"、「アクセシビリティを確認して」 | Quick Reference checklist above |
 | **Fix a UI bug** | "Button hover is broken"、"Layout shifts on load" | Quick Reference → relevant section |
 | **Improve / optimize** | "Make this faster"、"Improve mobile experience" | Step 3 (domain search: ux, react) |
 | **Implement dark mode** | "Add dark mode support" | Step 3 (domain: style "dark mode") |
@@ -579,10 +579,10 @@ Scope notice: The rules below are for App UI (iOS/Android/React Native/Flutter),
 
 ### Icons & Visual Elements
 
-- 默认图标库使用 **Phosphor (`@phosphor-icons/react`)**。`src/ui-ux-pro-max/data/icons.csv` 中列出的只是常用推荐图标，不是完整集合。
-- 当推荐表中找不到合适的图标时：
-  - **优先继续从 Phosphor 的完整图标集中选择任何语义更贴切的图标**；
-  - 如果 Phosphor 也没有理想选项，可以使用 **Heroicons (`@heroicons/react`)** 作为备选，注意保持风格一致（线性/填充、笔画粗细、圆角风格）。
+- アイコンライブラリは既定で **Phosphor (`@phosphor-icons/react`)** を使う。`src/ui-ux-pro-max/data/icons.csv` に載っているのはよく使う推奨アイコンだけで、全部ではない。
+- 推奨表に合うアイコンが見つからないとき：
+  - **まず Phosphor の全アイコンから、意味的により近いものを探す**。
+  - Phosphor にも良い候補がなければ **Heroicons (`@heroicons/react`)** を代替として使ってよい。線／塗り、線の太さ、角丸の付け方を揃え、スタイルが混ざらないようにする。
 
 | Rule | Standard | Avoid | Why It Matters |
 |------|----------|--------|----------------|
