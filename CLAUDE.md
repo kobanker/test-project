@@ -1,10 +1,11 @@
 # このリポジトリについて
 
 Claude のホーム（Cowork）で回していた作業手順を Claude Code に移管したもの。
-現時点で扱う仕事は次の二つ。
+現時点で扱う仕事は次の三つ。
 
 - **YouTube プロジェクト** — 詳細は `.claude/skills/youtube-project/SKILL.md`
 - **note の相場投稿** — 詳細は `.claude/skills/note-souba-post/SKILL.md`
+- **ブログ記事（SWELL / note / X）** — 詳細は `.claude/skills/blog-article/SKILL.md`
 
 手順そのものはスキルに書いてある。このファイルには、どの作業でも共通して守ってほしい
 ことだけを置く。手順が増えたら CLAUDE.md を膨らませるのではなく、
@@ -17,6 +18,8 @@ Claude のホーム（Cowork）で回していた作業手順を Claude Code に
 | `.claude/skills/` | 作業手順（スキル本体）。ここを読めば同じ品質で再現できる状態にしておく |
 | `youtube/` | YouTube 側の台本・企画メモ・書き出したもの |
 | `note/drafts/` | note の投稿下書き。1 投稿 1 ファイル |
+| `blog/drafts/` | ブログ記事の下書き。本文・X 用・note 用で 1 記事 3 ファイル |
+| `scripts/` | 投稿の自動化スクリプト（WordPress / X）。標準ライブラリのみで動く |
 
 ## 共通ルール
 
@@ -26,9 +29,14 @@ Claude のホーム（Cowork）で回していた作業手順を Claude Code に
 - 数字（価格、レート、日付）は必ず出典を確認してから書く。記憶で書かない。
 - 断定できないことは断定しない。「〜と見られる」など、確度がわかる書き方をする。
 - 下書きは必ずファイルとして保存する。チャットに出して終わりにしない。
+- 外部に出す操作（WordPress の公開、X への投稿）は勝手にやらない。下書き保存・dry run
+  までにして、最後は人が確認してから出す。
+- API キーやパスワードは `.env` に置く。`.env` はコミットしない。
 
 ## 使い方
 
 VSCode でこのフォルダを開き、ターミナルで `claude` を起動する。
-スキルは起動時に自動で読み込まれる。直接呼びたいときは `/youtube-project`
-または `/note-souba-post` と入力する。
+スキルは起動時に自動で読み込まれる。直接呼びたいときは `/youtube-project`、
+`/note-souba-post`、`/blog-article` と入力する。
+
+ブログの自動投稿を使う前に、一度だけ `cp .env.example .env` して中身を埋める。
