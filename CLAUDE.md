@@ -15,6 +15,7 @@ Claude のホーム（Cowork）で回していた作業手順を Claude Code に
 | 場所 | 用途 |
 | --- | --- |
 | `.claude/skills/` | 作業手順（スキル本体）。ここを読めば同じ品質で再現できる状態にしておく |
+| `.claude/settings.json` | このリポジトリで使うプラグインの設定。git で共有する |
 | `youtube/` | YouTube 側の台本・企画メモ・書き出したもの |
 | `note/drafts/` | note の投稿下書き。1 投稿 1 ファイル |
 
@@ -32,3 +33,10 @@ Claude のホーム（Cowork）で回していた作業手順を Claude Code に
 VSCode でこのフォルダを開き、ターミナルで `claude` を起動する。
 スキルは起動時に自動で読み込まれる。直接呼びたいときは `/youtube-project`
 または `/note-souba-post` と入力する。
+
+## プラグイン
+
+`.claude/settings.json` に [claude-mem](https://github.com/thedotmack/claude-mem)
+を入れてある。セッションをまたいで作業内容を覚えておくためのもの。
+このフォルダを初めて開いたときだけ、インストールの確認ダイアログに許可を出す。
+入っているか確かめるときは `/plugin` を叩く。
