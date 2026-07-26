@@ -1,2 +1,7 @@
 .claude/settings.local.json
 .DS_Store
+
+# API キー類は絶対にコミットしない
+*.key
+.ytkey
+.env
