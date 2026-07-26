@@ -1,2 +1,6 @@
 .claude/settings.local.json
 .DS_Store
+
+# 人に見せない素材（フォルダだけ残して中身は上げない）
+data/private/*
+!data/private/.gitkeep

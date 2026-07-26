@@ -17,6 +17,10 @@ Claude のホーム（Cowork）で回していた作業手順を Claude Code に
 | `.claude/skills/` | 作業手順（スキル本体）。ここを読めば同じ品質で再現できる状態にしておく |
 | `youtube/` | YouTube 側の台本・企画メモ・書き出したもの |
 | `note/drafts/` | note の投稿下書き。1 投稿 1 ファイル |
+| `data/` | 読み込ませたい素材・元データ。詳細は `data/README.md` |
+
+成果物は `youtube/` と `note/drafts/`、その材料は `data/` に置く。
+ファイル名は `YYYY-MM-DD-内容.拡張子` で揃える。
 
 ## 共通ルール
 
