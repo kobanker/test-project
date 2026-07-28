@@ -1,0 +1,567 @@
+<!--
+  資産運用モンテカルロシミュレーション(WordPress 貼り付け用)
+
+  使い方:
+  1. WordPress の投稿・固定ページ編集画面で「カスタムHTML」ブロックを追加する
+  2. このファイルの中身を丸ごと貼り付ける(これだけで動く。外部ライブラリ不要)
+  3. 複数記事で使い回す場合は、SWELL の「ブログパーツ」に登録して
+     呼び出しコードを記事に貼るのがおすすめ
+
+  ※ 期待リターン・リスクの初期値は編集可能な「入力例」。
+     記事として公開する前に、必ず最新の実績値を確認して調整すること。
+-->
+<div id="mcs-app">
+<style>
+  #mcs-app{
+    --mcs-surface:#fcfcfb; --mcs-ink:#0b0b0b; --mcs-ink2:#52514e; --mcs-muted:#898781;
+    --mcs-grid:#e1e0d9; --mcs-axis:#c3c2b7; --mcs-border:rgba(11,11,11,0.10);
+    --mcs-band-outer:#cde2fb; --mcs-band-inner:#9ec5f4; --mcs-line:#1c5cab;
+    --mcs-blue:#2a78d6; --mcs-blue-strong:#256abf;
+    font-family:system-ui,-apple-system,"Segoe UI","Hiragino Sans","Yu Gothic UI",sans-serif;
+    color:var(--mcs-ink); line-height:1.6;
+  }
+  #mcs-app *,#mcs-app *::before,#mcs-app *::after{box-sizing:border-box;}
+  #mcs-app .mcs-card{
+    background:var(--mcs-surface); border:1px solid var(--mcs-border);
+    border-radius:12px; padding:20px; max-width:860px; margin:0 auto;
+  }
+  #mcs-app .mcs-title{font-size:1.15rem; font-weight:700; margin:0 0 4px;}
+  #mcs-app .mcs-sub{font-size:.8rem; color:var(--mcs-ink2); margin:0 0 14px;}
+  #mcs-app .mcs-assets{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;}
+  #mcs-app .mcs-asset{
+    appearance:none; border:1px solid var(--mcs-border); background:#fff; color:var(--mcs-ink2);
+    border-radius:999px; padding:6px 14px; font-size:.85rem; cursor:pointer; font-weight:600;
+  }
+  #mcs-app .mcs-asset:hover{background:#f3f2ee;}
+  #mcs-app .mcs-asset[aria-pressed="true"]{
+    background:var(--mcs-blue); border-color:var(--mcs-blue); color:#fff;
+  }
+  #mcs-app .mcs-inputs{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:10px; margin-bottom:14px;
+  }
+  #mcs-app .mcs-field label{display:block; font-size:.75rem; color:var(--mcs-ink2); margin-bottom:3px;}
+  #mcs-app .mcs-field input,#mcs-app .mcs-field select{
+    width:100%; padding:7px 10px; font-size:.95rem; color:var(--mcs-ink);
+    border:1px solid var(--mcs-axis); border-radius:8px; background:#fff;
+    font-variant-numeric:tabular-nums;
+  }
+  #mcs-app .mcs-run{
+    appearance:none; border:none; background:var(--mcs-blue-strong); color:#fff;
+    font-size:.95rem; font-weight:700; padding:10px 26px; border-radius:8px; cursor:pointer;
+  }
+  #mcs-app .mcs-run:hover{background:var(--mcs-line);}
+  #mcs-app .mcs-run:disabled{opacity:.6; cursor:default;}
+  #mcs-app .mcs-tiles{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:10px; margin:18px 0 6px;
+  }
+  #mcs-app .mcs-tile{
+    border:1px solid var(--mcs-border); border-radius:10px; padding:10px 12px; background:#fff;
+  }
+  #mcs-app .mcs-tile .t{font-size:.72rem; color:var(--mcs-ink2);}
+  #mcs-app .mcs-tile .v{font-size:1.25rem; font-weight:700;}
+  #mcs-app .mcs-tile .s{font-size:.72rem; color:var(--mcs-muted);}
+  #mcs-app .mcs-chart-title{font-size:.9rem; font-weight:700; margin:18px 0 2px;}
+  #mcs-app .mcs-legend{
+    display:flex; flex-wrap:wrap; gap:14px; font-size:.75rem; color:var(--mcs-ink2); margin:4px 0 6px;
+  }
+  #mcs-app .mcs-legend span{display:inline-flex; align-items:center; gap:5px;}
+  #mcs-app .mcs-sw{display:inline-block; width:14px; height:10px; border-radius:2px;}
+  #mcs-app .mcs-sw.line{height:0; border-top:2px solid var(--mcs-line); border-radius:0;}
+  #mcs-app .mcs-sw.dash{height:0; border-top:2px dashed var(--mcs-muted); border-radius:0;}
+  #mcs-app .mcs-wrap{position:relative;}
+  #mcs-app canvas{display:block; width:100%;}
+  #mcs-app .mcs-tip{
+    position:absolute; pointer-events:none; display:none; z-index:5;
+    background:#fff; border:1px solid var(--mcs-border); border-radius:8px;
+    box-shadow:0 2px 8px rgba(11,11,11,.12); padding:8px 10px; font-size:.75rem;
+    color:var(--mcs-ink); white-space:nowrap; font-variant-numeric:tabular-nums;
+  }
+  #mcs-app .mcs-tip .h{font-weight:700; margin-bottom:2px;}
+  #mcs-app .mcs-tip .r{display:flex; justify-content:space-between; gap:12px;}
+  #mcs-app .mcs-tip .r .k{color:var(--mcs-ink2);}
+  #mcs-app details.mcs-table{margin-top:14px; font-size:.8rem;}
+  #mcs-app details.mcs-table summary{cursor:pointer; color:var(--mcs-ink2); font-weight:600;}
+  #mcs-app .mcs-scroll{overflow-x:auto;}
+  #mcs-app .mcs-table table{
+    border-collapse:collapse; width:100%; margin-top:8px; font-variant-numeric:tabular-nums;
+  }
+  #mcs-app .mcs-table th,#mcs-app .mcs-table td{
+    border-bottom:1px solid var(--mcs-grid); padding:5px 8px; text-align:right; white-space:nowrap;
+  }
+  #mcs-app .mcs-table th{color:var(--mcs-ink2); font-weight:600; font-size:.72rem;}
+  #mcs-app .mcs-table th:first-child,#mcs-app .mcs-table td:first-child{text-align:left;}
+  #mcs-app .mcs-note{font-size:.72rem; color:var(--mcs-muted); margin-top:16px;}
+</style>
+
+<div class="mcs-card">
+  <p class="mcs-title">資産運用モンテカルロシミュレーション</p>
+  <p class="mcs-sub">投資先を選んで条件を入力すると、将来の資産額の広がりを確率的に試算します。</p>
+
+  <div class="mcs-assets" role="group" aria-label="投資先の選択" id="mcs-assets"></div>
+
+  <div class="mcs-inputs">
+    <div class="mcs-field"><label for="mcs-init">初期投資額(万円)</label>
+      <input id="mcs-init" type="number" min="0" max="1000000" step="10" value="100"></div>
+    <div class="mcs-field"><label for="mcs-monthly">毎月の積立額(万円)</label>
+      <input id="mcs-monthly" type="number" min="0" max="10000" step="0.5" value="3"></div>
+    <div class="mcs-field"><label for="mcs-years">運用年数(年)</label>
+      <input id="mcs-years" type="number" min="1" max="50" step="1" value="20"></div>
+    <div class="mcs-field"><label for="mcs-ret">期待リターン(年率%)</label>
+      <input id="mcs-ret" type="number" min="-20" max="50" step="0.1" value="7"></div>
+    <div class="mcs-field"><label for="mcs-vol">リスク=標準偏差(年率%)</label>
+      <input id="mcs-vol" type="number" min="0" max="100" step="0.1" value="17"></div>
+    <div class="mcs-field"><label for="mcs-trials">試行回数</label>
+      <select id="mcs-trials">
+        <option value="1000">1,000回</option>
+        <option value="3000" selected>3,000回</option>
+        <option value="10000">10,000回</option>
+      </select></div>
+  </div>
+
+  <button class="mcs-run" id="mcs-run" type="button">シミュレーション実行</button>
+
+  <div id="mcs-results" hidden>
+    <div class="mcs-tiles">
+      <div class="mcs-tile"><div class="t" id="mcs-tile-median-t">中央値</div>
+        <div class="v" id="mcs-tile-median"></div><div class="s">シミュレーションの真ん中の結果</div></div>
+      <div class="mcs-tile"><div class="t">楽観シナリオ(上位10%)</div>
+        <div class="v" id="mcs-tile-p90"></div><div class="s">これを上回るのは10回に1回</div></div>
+      <div class="mcs-tile"><div class="t">悲観シナリオ(下位10%)</div>
+        <div class="v" id="mcs-tile-p10"></div><div class="s">これを下回るのは10回に1回</div></div>
+      <div class="mcs-tile"><div class="t">元本割れ確率</div>
+        <div class="v" id="mcs-tile-loss"></div><div class="s" id="mcs-tile-principal"></div></div>
+    </div>
+
+    <p class="mcs-chart-title">資産推移の見通し</p>
+    <div class="mcs-legend">
+      <span><i class="mcs-sw line"></i>中央値</span>
+      <span><i class="mcs-sw" style="background:var(--mcs-band-inner)"></i>25〜75%の範囲</span>
+      <span><i class="mcs-sw" style="background:var(--mcs-band-outer)"></i>10〜90%の範囲</span>
+      <span><i class="mcs-sw dash"></i>投資元本</span>
+    </div>
+    <div class="mcs-wrap">
+      <canvas id="mcs-fan" height="320" aria-label="資産推移のパーセンタイルを示すチャート" role="img"></canvas>
+      <div class="mcs-tip" id="mcs-fan-tip"></div>
+    </div>
+
+    <p class="mcs-chart-title" id="mcs-hist-title">最終資産額の分布</p>
+    <div class="mcs-wrap">
+      <canvas id="mcs-hist" height="240" aria-label="最終資産額のヒストグラム" role="img"></canvas>
+      <div class="mcs-tip" id="mcs-hist-tip"></div>
+    </div>
+
+    <details class="mcs-table">
+      <summary>数値表を表示(5年ごとのパーセンタイル)</summary>
+      <div class="mcs-scroll">
+      <table id="mcs-ptable">
+        <thead><tr><th>経過年数</th><th>下位5%</th><th>下位25%</th><th>中央値</th><th>上位25%</th><th>上位5%</th><th>投資元本</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      </div>
+    </details>
+
+    <p class="mcs-note">
+      本シミュレーションは、入力した期待リターンとリスク(標準偏差)をもとに、収益率が対数正規分布に
+      従うと仮定した確率的な試算であり、将来の運用成果を予測・保証するものではありません。
+      期待リターン・リスクの初期値は編集可能な入力例です。実際の値は各指数の公表データなどで
+      ご確認のうえ調整してください。税金・手数料・信託報酬は考慮していません。
+    </p>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---- 投資先プリセット(値はあくまで入力例。ユーザーが自由に編集できる) ---- */
+  var PRESETS = [
+    {key:"jp",    label:"日本株",     ret:5,  vol:17},
+    {key:"acwi",  label:"オルカン",   ret:7,  vol:17},
+    {key:"sp500", label:"S&P500",    ret:9,  vol:18},
+    {key:"ndq",   label:"NASDAQ100", ret:13, vol:22},
+    {key:"fang",  label:"FANG+",     ret:18, vol:30}
+  ];
+
+  var $ = function(id){ return document.getElementById(id); };
+  var state = { result:null };
+
+  /* ---- 投資先ボタン ---- */
+  var assetsBox = $("mcs-assets");
+  PRESETS.forEach(function(p){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "mcs-asset"; b.textContent = p.label;
+    b.setAttribute("aria-pressed", p.key === "acwi" ? "true" : "false");
+    b.addEventListener("click", function(){
+      assetsBox.querySelectorAll(".mcs-asset").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      $("mcs-ret").value = p.ret;
+      $("mcs-vol").value = p.vol;
+      run();
+    });
+    assetsBox.appendChild(b);
+  });
+  ["mcs-ret","mcs-vol"].forEach(function(id){
+    $(id).addEventListener("input", function(){
+      assetsBox.querySelectorAll(".mcs-asset").forEach(function(x){ x.setAttribute("aria-pressed","false"); });
+    });
+  });
+
+  /* ---- 乱数(標準正規) ---- */
+  var spare = null;
+  function gauss(){
+    if (spare !== null){ var s0 = spare; spare = null; return s0; }
+    var u, v, s;
+    do { u = Math.random()*2-1; v = Math.random()*2-1; s = u*u+v*v; } while (s >= 1 || s === 0);
+    var m = Math.sqrt(-2*Math.log(s)/s);
+    spare = v*m;
+    return u*m;
+  }
+
+  function percentile(sorted, q){
+    var i = (sorted.length-1)*q, lo = Math.floor(i), hi = Math.ceil(i);
+    return sorted[lo] + (sorted[hi]-sorted[lo])*(i-lo);
+  }
+
+  /* ---- シミュレーション本体(単位: 万円) ---- */
+  function simulate(p){
+    var months = p.years*12;
+    var sigmaM = p.vol/Math.sqrt(12);
+    var muM = Math.log(1+p.ret)/12 - sigmaM*sigmaM/2;
+    var yearly = [];
+    for (var y = 0; y <= p.years; y++) yearly.push(new Float64Array(p.trials));
+    for (var t = 0; t < p.trials; t++){
+      var v = p.init;
+      yearly[0][t] = v;
+      for (var m = 1; m <= months; m++){
+        v = v*Math.exp(muM + sigmaM*gauss()) + p.monthly;
+        if (m % 12 === 0) yearly[m/12][t] = v;
+      }
+    }
+    var finals = Array.prototype.slice.call(yearly[p.years]);
+    var principal = [], bands = {p5:[],p10:[],p25:[],p50:[],p75:[],p90:[],p95:[]};
+    for (y = 0; y <= p.years; y++){
+      principal.push(p.init + p.monthly*12*y);
+      yearly[y].sort();
+      bands.p5.push(percentile(yearly[y], .05));
+      bands.p10.push(percentile(yearly[y], .10));
+      bands.p25.push(percentile(yearly[y], .25));
+      bands.p50.push(percentile(yearly[y], .50));
+      bands.p75.push(percentile(yearly[y], .75));
+      bands.p90.push(percentile(yearly[y], .90));
+      bands.p95.push(percentile(yearly[y], .95));
+    }
+    var finalPrincipal = principal[p.years], lossCount = 0;
+    for (t = 0; t < p.trials; t++) if (finals[t] < finalPrincipal) lossCount++;
+    return {
+      params:p, bands:bands, principal:principal, finals:finals,
+      lossProb: lossCount/p.trials
+    };
+  }
+
+  /* ---- 表示フォーマット ---- */
+  function fmtMoney(man){
+    if (man >= 10000){
+      var oku = man/10000;
+      var s = oku >= 100 ? Math.round(oku).toLocaleString("ja-JP")
+            : oku >= 10 ? oku.toFixed(1) : oku.toFixed(2);
+      return s + "億円";
+    }
+    return Math.round(man).toLocaleString("ja-JP") + "万円";
+  }
+
+  /* ---- キャンバス準備 ---- */
+  function setupCanvas(canvas, cssH){
+    var w = canvas.parentNode.clientWidth || 600;
+    var dpr = window.devicePixelRatio || 1;
+    canvas.style.height = cssH + "px";
+    canvas.width = Math.round(w*dpr);
+    canvas.height = Math.round(cssH*dpr);
+    var ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    return { ctx:ctx, w:w, h:cssH };
+  }
+
+  function niceStep(raw){
+    var mag = Math.pow(10, Math.floor(Math.log(raw)/Math.LN10));
+    var n = raw/mag;
+    var f = n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10;
+    return f*mag;
+  }
+
+  var css = getComputedStyle($("mcs-app") || document.documentElement);
+  function col(name, fallback){
+    var v = css.getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  var C = {
+    bandOuter: col("--mcs-band-outer","#cde2fb"),
+    bandInner: col("--mcs-band-inner","#9ec5f4"),
+    line:      col("--mcs-line","#1c5cab"),
+    blue:      col("--mcs-blue","#2a78d6"),
+    grid:      col("--mcs-grid","#e1e0d9"),
+    axis:      col("--mcs-axis","#c3c2b7"),
+    muted:     col("--mcs-muted","#898781"),
+    ink2:      col("--mcs-ink2","#52514e"),
+    surface:   col("--mcs-surface","#fcfcfb")
+  };
+  var PAD = { l:64, r:16, t:12, b:26 };
+
+  /* ---- ファンチャート ---- */
+  var fanGeom = null;
+  function drawFan(res){
+    var cv = $("mcs-fan"), g = setupCanvas(cv, 320), ctx = g.ctx;
+    var Y = res.params.years;
+    var yMax = Math.max.apply(null, res.bands.p90.concat([res.principal[Y]]))*1.05;
+    var step = niceStep(yMax/5);
+    yMax = Math.ceil(yMax/step)*step;
+    var px = function(yr){ return PAD.l + (yr/Y)*(g.w-PAD.l-PAD.r); };
+    var py = function(v){ return g.h-PAD.b - (v/yMax)*(g.h-PAD.t-PAD.b); };
+    fanGeom = { px:px, py:py, w:g.w, h:g.h, Y:Y };
+
+    ctx.clearRect(0,0,g.w,g.h);
+    ctx.font = "11px system-ui, sans-serif";
+
+    /* グリッドとY軸目盛 */
+    ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillStyle = C.muted;
+    for (var v = 0; v <= yMax+1e-9; v += step){
+      ctx.strokeStyle = v === 0 ? C.axis : C.grid; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(PAD.l, py(v)); ctx.lineTo(g.w-PAD.r, py(v)); ctx.stroke();
+      ctx.fillText(fmtMoney(v), PAD.l-8, py(v));
+    }
+    /* X軸目盛 */
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    var xt = Y <= 12 ? 2 : Y <= 30 ? 5 : 10;
+    for (var yr = 0; yr <= Y; yr += xt) ctx.fillText(yr+"年", px(yr), g.h-PAD.b+6);
+
+    function band(loArr, hiArr, color){
+      ctx.beginPath();
+      for (var i = 0; i <= Y; i++) ctx[i?"lineTo":"moveTo"](px(i), py(hiArr[i]));
+      for (i = Y; i >= 0; i--) ctx.lineTo(px(i), py(loArr[i]));
+      ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+    }
+    band(res.bands.p10, res.bands.p90, C.bandOuter);
+    band(res.bands.p25, res.bands.p75, C.bandInner);
+
+    function line(arr, color, dash){
+      ctx.beginPath();
+      for (var i = 0; i <= Y; i++) ctx[i?"lineTo":"moveTo"](px(i), py(arr[i]));
+      ctx.strokeStyle = color; ctx.lineWidth = 2;
+      ctx.setLineDash(dash || []); ctx.stroke(); ctx.setLineDash([]);
+    }
+    line(res.principal, C.muted, [5,4]);
+    line(res.bands.p50, C.line);
+  }
+
+  /* ---- ヒストグラム ---- */
+  var histGeom = null;
+  function drawHist(res){
+    var cv = $("mcs-hist"), g = setupCanvas(cv, 240), ctx = g.ctx;
+    var sorted = res.finals.slice().sort(function(a,b){ return a-b; });
+    var xMax = percentile(sorted, .99), xMin = 0;
+    var nBins = Math.min(28, Math.max(14, Math.round(g.w/28)));
+    var bw = (xMax-xMin)/nBins;
+    var counts = new Array(nBins).fill(0);
+    res.finals.forEach(function(v){
+      var i = Math.min(nBins-1, Math.max(0, Math.floor((v-xMin)/bw)));
+      counts[i]++;
+    });
+    var cMax = Math.max.apply(null, counts);
+    var px = function(x){ return PAD.l + ((x-xMin)/(xMax-xMin))*(g.w-PAD.l-PAD.r); };
+    var py = function(c){ return g.h-PAD.b - (c/cMax)*(g.h-PAD.t-PAD.b); };
+    histGeom = { px:px, py:py, w:g.w, h:g.h, xMin:xMin, xMax:xMax, bw:bw, counts:counts, nBins:nBins, total:res.finals.length };
+
+    ctx.clearRect(0,0,g.w,g.h);
+    ctx.font = "11px system-ui, sans-serif";
+
+    /* Y軸(割合)グリッド — %基準のきりのよい刻みで引く */
+    var total = res.finals.length;
+    var cMaxPct = cMax/total*100;
+    var stepPct = niceStep(cMaxPct/4);
+    ctx.textAlign = "right"; ctx.textBaseline = "middle"; ctx.fillStyle = C.muted;
+    for (var pc = 0; pc <= cMaxPct+1e-9; pc += stepPct){
+      var c = pc/100*total;
+      ctx.strokeStyle = pc === 0 ? C.axis : C.grid; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(PAD.l, py(c)); ctx.lineTo(g.w-PAD.r, py(c)); ctx.stroke();
+      ctx.fillText((stepPct < 1 ? pc.toFixed(1) : Math.round(pc))+"%", PAD.l-8, py(c));
+    }
+    /* X軸目盛 */
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    var stepX = niceStep((xMax-xMin)/5);
+    for (var x = 0; x <= xMax+1e-9; x += stepX) ctx.fillText(fmtMoney(x), px(x), g.h-PAD.b+6);
+
+    /* バー(角丸トップ、2pxの隙間) */
+    ctx.fillStyle = C.blue;
+    var gap = 2, r = 4;
+    for (var i = 0; i < nBins; i++){
+      if (!counts[i]) continue;
+      var x0 = px(xMin+i*bw)+gap/2, x1 = px(xMin+(i+1)*bw)-gap/2;
+      var top = py(counts[i]), bot = g.h-PAD.b;
+      var rr = Math.min(r, (x1-x0)/2, (bot-top));
+      ctx.beginPath();
+      ctx.moveTo(x0, bot); ctx.lineTo(x0, top+rr);
+      ctx.arcTo(x0, top, x0+rr, top, rr); ctx.lineTo(x1-rr, top);
+      ctx.arcTo(x1, top, x1, top+rr, rr); ctx.lineTo(x1, bot);
+      ctx.closePath(); ctx.fill();
+    }
+
+    /* 中央値と元本の目印(ラベルは背景付きで、近接時は縦にずらす) */
+    var marks = [
+      { v: res.principal[res.params.years], color: C.muted, label: "元本", dash: [5,4] },
+      { v: percentile(sorted, .5), color: C.line, label: "中央値", dash: [] }
+    ].filter(function(m){ return m.v <= xMax; });
+    marks.forEach(function(m){
+      ctx.strokeStyle = m.color; ctx.lineWidth = 2; ctx.setLineDash(m.dash);
+      ctx.beginPath(); ctx.moveTo(px(m.v), PAD.t); ctx.lineTo(px(m.v), g.h-PAD.b); ctx.stroke();
+      ctx.setLineDash([]);
+    });
+    ctx.textAlign = "left"; ctx.textBaseline = "top";
+    var lastLabelEnd = -1, labelY = PAD.t;
+    marks.sort(function(a,b){ return a.v-b.v; }).forEach(function(m){
+      var tx = px(m.v)+5, tw = ctx.measureText(m.label).width;
+      labelY = tx < lastLabelEnd ? labelY+16 : PAD.t;
+      ctx.fillStyle = C.surface;
+      ctx.fillRect(tx-2, labelY-2, tw+4, 15);
+      ctx.fillStyle = C.ink2;
+      ctx.fillText(m.label, tx, labelY);
+      lastLabelEnd = tx+tw+8;
+    });
+  }
+
+  /* ---- ツールチップ ---- */
+  function attachTip(canvas, tip, handler){
+    function move(ev){
+      var rect = canvas.getBoundingClientRect();
+      var x = ev.clientX-rect.left, y = ev.clientY-rect.top;
+      var html = handler(x, y);
+      if (!html){ tip.style.display = "none"; return; }
+      tip.innerHTML = html;
+      tip.style.display = "block";
+      var wrapW = canvas.parentNode.clientWidth;
+      var tw = tip.offsetWidth;
+      var left = x+14+tw > wrapW ? x-14-tw : x+14;
+      tip.style.left = Math.max(0,left)+"px";
+      tip.style.top = Math.max(0, y-10)+"px";
+    }
+    canvas.addEventListener("pointermove", move);
+    canvas.addEventListener("pointerleave", function(){ tip.style.display = "none"; });
+  }
+
+  function tipRow(k, v){
+    return '<div class="r"><span class="k">'+k+'</span><span>'+v+'</span></div>';
+  }
+
+  attachTip($("mcs-fan"), $("mcs-fan-tip"), function(x, y){
+    var res = state.result, g = fanGeom;
+    if (!res || !g || x < PAD.l || x > g.w-PAD.r) return null;
+    var yr = Math.round((x-PAD.l)/(g.w-PAD.l-PAD.r)*g.Y);
+    yr = Math.max(0, Math.min(g.Y, yr));
+    /* 十字線を引き直す */
+    drawFan(res);
+    var ctx = $("mcs-fan").getContext("2d");
+    ctx.strokeStyle = C.axis; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(g.px(yr), PAD.t); ctx.lineTo(g.px(yr), g.h-PAD.b); ctx.stroke();
+    ctx.fillStyle = C.line;
+    ctx.beginPath(); ctx.arc(g.px(yr), g.py(res.bands.p50[yr]), 4, 0, Math.PI*2); ctx.fill();
+    ctx.strokeStyle = C.surface; ctx.lineWidth = 2; ctx.stroke();
+    return '<div class="h">'+yr+'年後</div>'
+      + tipRow("上位10%", fmtMoney(res.bands.p90[yr]))
+      + tipRow("上位25%", fmtMoney(res.bands.p75[yr]))
+      + tipRow("中央値", fmtMoney(res.bands.p50[yr]))
+      + tipRow("下位25%", fmtMoney(res.bands.p25[yr]))
+      + tipRow("下位10%", fmtMoney(res.bands.p10[yr]))
+      + tipRow("投資元本", fmtMoney(res.principal[yr]));
+  });
+
+  attachTip($("mcs-hist"), $("mcs-hist-tip"), function(x, y){
+    var g = histGeom;
+    if (!g || x < PAD.l || x > g.w-PAD.r) return null;
+    var i = Math.floor((x-PAD.l)/(g.w-PAD.l-PAD.r)*g.nBins);
+    if (i < 0 || i >= g.nBins) return null;
+    var lo = g.xMin+i*g.bw, hi = g.xMin+(i+1)*g.bw;
+    var range = fmtMoney(lo)+" 〜 "+fmtMoney(hi)+(i === g.nBins-1 ? "超含む" : "");
+    return '<div class="h">'+range+'</div>'
+      + tipRow("割合", (g.counts[i]/g.total*100).toFixed(1)+"%")
+      + tipRow("回数", g.counts[i].toLocaleString("ja-JP")+"回");
+  });
+
+  /* ---- 結果の描画 ---- */
+  function render(res){
+    var Y = res.params.years;
+    $("mcs-results").hidden = false;
+    $("mcs-tile-median-t").textContent = Y+"年後の中央値";
+    $("mcs-tile-median").textContent = fmtMoney(res.bands.p50[Y]);
+    $("mcs-tile-p90").textContent = fmtMoney(res.bands.p90[Y]);
+    $("mcs-tile-p10").textContent = fmtMoney(res.bands.p10[Y]);
+    $("mcs-tile-loss").textContent = (res.lossProb*100).toFixed(1)+"%";
+    $("mcs-tile-principal").textContent = "投資元本 "+fmtMoney(res.principal[Y]);
+    $("mcs-hist-title").textContent = Y+"年後の資産額の分布";
+
+    var tbody = $("mcs-ptable").querySelector("tbody");
+    tbody.innerHTML = "";
+    var rows = [];
+    for (var y = 5; y < Y; y += 5) rows.push(y);
+    if (rows[rows.length-1] !== Y) rows.push(Y);
+    rows.forEach(function(y){
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td>"+y+"年</td>"
+        + "<td>"+fmtMoney(res.bands.p5[y])+"</td>"
+        + "<td>"+fmtMoney(res.bands.p25[y])+"</td>"
+        + "<td>"+fmtMoney(res.bands.p50[y])+"</td>"
+        + "<td>"+fmtMoney(res.bands.p75[y])+"</td>"
+        + "<td>"+fmtMoney(res.bands.p95[y])+"</td>"
+        + "<td>"+fmtMoney(res.principal[y])+"</td>";
+      tbody.appendChild(tr);
+    });
+
+    drawFan(res);
+    drawHist(res);
+  }
+
+  /* ---- 実行 ---- */
+  function readParams(){
+    var num = function(id, def){ var v = parseFloat($(id).value); return isFinite(v) ? v : def; };
+    var years = Math.max(1, Math.min(50, Math.round(num("mcs-years",20))));
+    return {
+      init:    Math.max(0, num("mcs-init",100)),
+      monthly: Math.max(0, num("mcs-monthly",3)),
+      years:   years,
+      ret:     Math.max(-0.2, Math.min(0.5, num("mcs-ret",7)/100)),
+      vol:     Math.max(0, Math.min(1, num("mcs-vol",17)/100)),
+      trials:  parseInt($("mcs-trials").value, 10) || 3000
+    };
+  }
+
+  function run(){
+    var btn = $("mcs-run");
+    btn.disabled = true; btn.textContent = "計算中…";
+    setTimeout(function(){
+      try {
+        var p = readParams();
+        if (p.init === 0 && p.monthly === 0){
+          alert("初期投資額か毎月の積立額のどちらかを入力してください。");
+          return;
+        }
+        state.result = simulate(p);
+        render(state.result);
+      } finally {
+        btn.disabled = false; btn.textContent = "シミュレーション実行";
+      }
+    }, 30);
+  }
+  $("mcs-run").addEventListener("click", run);
+
+  /* リサイズで再描画 */
+  var resizeTimer = null;
+  window.addEventListener("resize", function(){
+    if (!state.result) return;
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function(){ drawFan(state.result); drawHist(state.result); }, 150);
+  });
+
+  /* 初期表示(オルカンのプリセットで一度実行) */
+  run();
+})();
+</script>
+</div>
