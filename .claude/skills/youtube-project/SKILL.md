@@ -87,3 +87,16 @@ Drive コネクタでは「マイドライブ > ★Youtube」フォルダ（ID: 
 
 - リサーチ：`youtube/YYYY-MM-DD-企画名-research.md`
 - 台本：`youtube/YYYY-MM-DD-daihon-企画名.md`
+
+## 台本を開くとき
+
+ブラウザは **Chrome** を使う（Edge ではない）。
+既定のブラウザが Edge のままでも、リポジトリ直下の `open-in-chrome.cmd` を使えば Chrome で開ける。
+
+```
+open-in-chrome.cmd                                   引数なし＝youtube\ の最新台本
+open-in-chrome.cmd youtube\2026-07-28-daihon-xxx.md  ファイル指定
+```
+
+恒久的に直すなら Windows の 設定 → アプリ → 既定のアプリ → Google Chrome →
+「既定に設定」。
