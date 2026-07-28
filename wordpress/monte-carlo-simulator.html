@@ -16,6 +16,7 @@
   #mcs-app .mcs-title{font-size:1.15rem; font-weight:700; margin:0 0 4px;}
   #mcs-app .mcs-sub{font-size:.8rem; color:var(--mcs-ink2); margin:0 0 14px;}
   #mcs-app .mcs-assets{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;}
+  #mcs-app .mcs-boot-hint{font-size:.75rem; color:var(--mcs-muted);}
   #mcs-app .mcs-asset{
     appearance:none; border:1px solid var(--mcs-border); background:#fff; color:var(--mcs-ink2);
     border-radius:999px; padding:6px 14px; font-size:.85rem; cursor:pointer; font-weight:600;
@@ -87,7 +88,7 @@
   <p class="mcs-title">資産運用モンテカルロシミュレーション</p>
   <p class="mcs-sub">投資先を選んで条件を入力すると、将来の資産額の広がりを確率的に試算します。</p>
 
-  <div class="mcs-assets" role="group" aria-label="投資先の選択" id="mcs-assets"></div>
+  <div class="mcs-assets" role="group" aria-label="投資先の選択" id="mcs-assets"><span class="mcs-boot-hint">読み込み中… この表示のまま投資先ボタンが出ない場合、WordPress側でスクリプトが削除・停止されています(貼り付け方のREADME「動かないときのチェックリスト」参照)。</span></div>
 
   <div class="mcs-inputs">
     <div class="mcs-field"><label for="mcs-init">初期投資額(万円)</label>
@@ -547,6 +548,10 @@
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(function(){ drawFan(state.result); drawHist(state.result); }, 150);
   });
+
+  /* スクリプトがここまで動けば診断用ヒントを消す */
+  var bootHint = document.querySelector("#mcs-app .mcs-boot-hint");
+  if (bootHint) bootHint.parentNode.removeChild(bootHint);
 
   /* 初期表示(オルカンのプリセットで一度実行) */
   run();
