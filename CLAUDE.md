@@ -18,6 +18,16 @@ Claude のホーム（Cowork）で回していた作業手順を Claude Code に
 | `youtube/` | YouTube 側の台本・企画メモ・書き出したもの |
 | `note/drafts/` | note の投稿下書き。1 投稿 1 ファイル |
 
+## 参照資料（Google ドライブ）
+
+OneNote に溜めていた文章系の資料は、Google ドライブの「マイドライブ > Onenote」
+フォルダにエクスポートして置いてある。今後もここに追加されるので、
+過去の文章・メモを参照したいときは Google Drive コネクタでこのフォルダを検索すること。
+
+- フォルダ名: `Onenote`（マイドライブ直下）
+- フォルダ ID: `1dym38baAruZnFCxCEyt4PpVaXtziCpfG`
+- 検索例: `parentId = '1dym38baAruZnFCxCEyt4PpVaXtziCpfG'`
+
 ## 共通ルール
 
 <!-- TODO: 以下はいったん一般的な内容を置いてあります。実際のこだわりに書き換えてください -->
