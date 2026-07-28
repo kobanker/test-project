@@ -27,8 +27,12 @@ OneNote に溜めていた文章系の資料は、Google ドライブの「マ�
 - フォルダ名: `Onenote`（マイドライブ直下）
 - フォルダ ID: `1dym38baAruZnFCxCEyt4PpVaXtziCpfG`
 - 検索例: `parentId = '1dym38baAruZnFCxCEyt4PpVaXtziCpfG'`
-- 制約: コネクタで読めるのは 1 ファイルおよそ 10MB まで。ノートブック全体を
-  1 つの PDF にすると読めないので、セクション単位など小分けにして置いてもらう。
+- 制約: コネクタでダウンロードできるのは 1 ファイル 10MB まで。超えるファイルは
+  読めないので、セクションをさらに分けるか PDF で小分けにして置いてもらう。
+- OneNote ネイティブの `.one` ファイルも読める。`download_file_content` で取得した
+  結果（JSON + base64）を `scripts/extract_one.py` に通すと、ページタイトルと
+  本文テキストを抽出できる（`pip install pyOneNote` が必要）。
+- `🔏重要・PASS.one` はパスワード管理ファイルなので開かないこと。
 
 ## 共通ルール
 
