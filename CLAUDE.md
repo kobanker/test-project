@@ -27,6 +27,8 @@ OneNote に溜めていた文章系の資料は、Google ドライブの「マ�
 - フォルダ名: `Onenote`（マイドライブ直下）
 - フォルダ ID: `1dym38baAruZnFCxCEyt4PpVaXtziCpfG`
 - 検索例: `parentId = '1dym38baAruZnFCxCEyt4PpVaXtziCpfG'`
+- 制約: コネクタで読めるのは 1 ファイルおよそ 10MB まで。ノートブック全体を
+  1 つの PDF にすると読めないので、セクション単位など小分けにして置いてもらう。
 
 ## 共通ルール
 
