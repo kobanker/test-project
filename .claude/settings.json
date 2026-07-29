@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$CLAUDE_PROJECT_DIR/.claude/hooks/codex-review.sh",
+            "statusMessage": "Codex に差分を見せている",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}

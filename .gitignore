@@ -1,2 +1,7 @@
 .claude/settings.local.json
 .DS_Store
+
+# Obsidian の設定は端末ごとに違うので共有しない。
+# 共有したいテンプレートは brain/templates/ にリポジトリ側で持つ。
+.obsidian/
+.trash/
