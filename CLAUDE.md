@@ -16,6 +16,7 @@ Claude のホーム（Cowork）で回していた作業手順を Claude Code に
 | --- | --- |
 | `.claude/skills/` | 作業手順（スキル本体）。ここを読めば同じ品質で再現できる状態にしておく |
 | `youtube/` | YouTube 側の台本・企画メモ・書き出したもの |
+| `youtube/refs/` | 参考動画の文字起こし。`fetch_transcript.py` が書き出す |
 | `note/drafts/` | note の投稿下書き。1 投稿 1 ファイル |
 
 ## 共通ルール
