@@ -15,6 +15,7 @@ Claude のホーム（Cowork）で回していた作業手順を Claude Code に
 | 場所 | 用途 |
 | --- | --- |
 | `.claude/skills/` | 作業手順（スキル本体）。ここを読めば同じ品質で再現できる状態にしておく |
+| `.claude/agents/` | サブエージェント定義。外部から入れたものもここに置く |
 | `youtube/` | YouTube 側の台本・企画メモ・書き出したもの |
 | `note/drafts/` | note の投稿下書き。1 投稿 1 ファイル |
 
