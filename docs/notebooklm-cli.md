@@ -49,10 +49,24 @@ nlm doctor
 
 ## Claude Code に MCP として登録する
 
+このリポジトリには `.mcp.json` を置いてあるので、`claude` をこのフォルダで起動すれば
+`notebooklm` サーバーが候補に出る（初回は接続の許可を聞かれる）。43 個のツールが使えるようになる。
+
+グローバルに登録したい場合は次のコマンド。
+
 ```bash
 nlm setup add "Claude Code"
 nlm setup list          # 登録状況の確認
 ```
+
+## .mcpb（Claude Desktop 用の拡張）について
+
+配布されている `notebooklmmcp0.9.4.mcpb` は **Claude Desktop 専用**のパッケージ形式。
+Claude Desktop の設定 → Extensions にドラッグ＆ドロップすると入る。Claude Code では使わない。
+
+中身は `uvx --from notebooklm-mcp-cli notebooklm-mcp` を叩くだけの起動スクリプトで、
+サーバー本体は同梱されていない。したがって .mcpb を入れる場合でも、
+上のインストール（`uv` / `uvx`）と `nlm login` は別途必要。
 
 ## よく使うコマンド
 
