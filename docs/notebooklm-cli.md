@@ -47,6 +47,24 @@ nlm login --check
 nlm doctor
 ```
 
+### リモートセッション（ブラウザが無い環境）で認証する場合
+
+Claude Code のウェブ／リモートセッションにはサインイン済みブラウザが無いので `nlm login` は使えない。
+その場合は Cookie を手で渡す方法がある。
+
+1. ローカルのブラウザで https://notebook.google.com を開く（ログイン済みの状態）
+2. DevTools を開き（F12 / Cmd+Option+I）、Network タブへ
+3. `batchexecute` でフィルタし、ノートブックをクリックしてリクエストを発生させる
+4. リクエストの Request Headers から `cookie:` の**値**をコピーする（`SID=...` で始まる部分。`cookie: ` は含めない）
+5. その文字列をファイルに保存して読み込ませる
+
+```bash
+nlm login --manual --file ~/.nlm/cookies.txt
+```
+
+**注意：** ここでコピーする Cookie は Google アカウントのセッション認証情報そのもの。
+チャットや共有リポジトリに貼らないこと。ローカルで `nlm login` が使える場面では、そちらを使うほうが安全。
+
 ## Claude Code に MCP として登録する
 
 このリポジトリには `.mcp.json` を置いてあるので、`claude` をこのフォルダで起動すれば
