@@ -7,6 +7,12 @@
       "skillPath": "skills/funnel-analysis/SKILL.md",
       "computedHash": "27492490ace011bdfff48d5eca318609e8d34045ff800bd176c7239074006c19"
     },
+    "cro-methodology": {
+      "source": "wondelai/skills",
+      "sourceType": "github",
+      "skillPath": "cro-methodology/SKILL.md",
+      "computedHash": "4c8b86029d16a16a3a62c45a0bdde2b45caa20e73a26b4e5ef46129615cc1a9c"
+    },
     "notebooklm": {
       "source": "proyecto26/notebooklm-ai-plugin",
       "sourceType": "github",
