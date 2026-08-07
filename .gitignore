@@ -1,2 +1,5 @@
 .claude/settings.local.json
 .DS_Store
+
+# npx skills add が .claude/skills/ と同じ中身を複製する先。Claude Code しか使わないので追わない
+.agents/

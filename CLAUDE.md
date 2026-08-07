@@ -6,6 +6,10 @@ Claude のホーム（Cowork）で回していた作業手順を Claude Code に
 - **YouTube プロジェクト** — 詳細は `.claude/skills/youtube-project/SKILL.md`
 - **note の相場投稿** — 詳細は `.claude/skills/note-souba-post/SKILL.md`
 
+自分で書いた手順のほかに、外から入れたスキルも `.claude/skills/` に置いてある
+（`notebooklm` / `funnel-analysis`）。入れ直すときは `skills-lock.json` を見ること。
+`notebooklm` は初回に Chrome で Google ログインが要るので、手元の PC でしか動かない。
+
 手順そのものはスキルに書いてある。このファイルには、どの作業でも共通して守ってほしい
 ことだけを置く。手順が増えたら CLAUDE.md を膨らませるのではなく、
 `.claude/skills/` にスキルを足すこと。

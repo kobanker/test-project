@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "Funnel Analysis": {
+      "source": "aj-geddes/useful-ai-prompts",
+      "sourceType": "github",
+      "skillPath": "skills/funnel-analysis/SKILL.md",
+      "computedHash": "27492490ace011bdfff48d5eca318609e8d34045ff800bd176c7239074006c19"
+    },
+    "notebooklm": {
+      "source": "proyecto26/notebooklm-ai-plugin",
+      "sourceType": "github",
+      "skillPath": "skills/notebooklm/SKILL.md",
+      "computedHash": "078108b02a17524a42381ca87f6e307e228aed2574494343903dbd3f8a6f3b49"
+    }
+  }
+}
